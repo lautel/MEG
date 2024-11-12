@@ -1,4 +1,4 @@
-name: sa2
+name: meg2
 channels:
   - nvidia
   - pytorch-nightly
@@ -279,4 +279,4 @@ dependencies:
       - xformers==0.0.22.post7
       - xxhash==3.4.1
       - yarl==1.9.2
-prefix: /home/ubuntu/miniconda3/envs/sa2
+prefix: /home/ubuntu/miniconda3/envs/meg2

@@ -517,7 +517,6 @@ class PubMedQADataset(Dataset):
         return all_embeddings
 
 
-
 class MedMCQADataset(Dataset):
     def __init__(self, args, dtype, tokenizer, normalize_prefix, prefix_length, random_prefix, is_training, is_inference=False):
         self.modelname = args.modelname

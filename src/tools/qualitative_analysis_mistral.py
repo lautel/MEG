@@ -3,37 +3,36 @@ import logging
 import torch
 import transformers
 from transformers import MistralForCausalLM
-from traim_meg_mistral import MEG
+from train_meg_mistral import MEG
 from config import parse_meg_config
 from trl import SFTConfig
 from argparser import DataArguments, ModelArguments, LoraArguments
 from utils import set_seed
-from huggingface_hub import login
-
-login(token="your-hugginface-login-token")
 
 logger = logging.getLogger(__name__)
-logging.getLogger('transformers.generation_utils').disabled = True
+logging.getLogger("transformers.generation_utils").disabled = True
 logger.setLevel(logging.DEBUG)
 
 os.environ["TOKENIZERS_PARALLELISM"] = "true"
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     parser = transformers.HfArgumentParser(
         (DataArguments, SFTConfig, LoraArguments, ModelArguments)
     )
-    data_args, training_args, lora_args, model_args = parser.parse_args_into_dataclasses()
+    data_args, training_args, lora_args, model_args = (
+        parser.parse_args_into_dataclasses()
+    )
     set_seed(training_args.seed)
 
     ## Config precision
-    dtype=torch.float16
+    dtype = torch.float16
     if training_args.bf16:
-        dtype=torch.bfloat16
+        dtype = torch.bfloat16
     else:
         if training_args.tf32:
-            dtype=torch.float32
-    
+            dtype = torch.float32
+
     if data_args.temp < 1e-4:
         do_sample = False
     else:
@@ -43,15 +42,19 @@ if __name__ == '__main__':
     config = parse_meg_config(data_args, training_args, lora_args, model_args, dtype)
     if training_args.resume_from_checkpoint:
         if "global_step" in training_args.resume_from_checkpoint:
-            ckpt_filepath = f"{training_args.resume_from_checkpoint}/mp_rank_00_model_states.pt"
+            ckpt_filepath = (
+                f"{training_args.resume_from_checkpoint}/mp_rank_00_model_states.pt"
+            )
         else:
-            ckpt_filepath = f"{training_args.resume_from_checkpoint}/model_state_dict.pt"
+            ckpt_filepath = (
+                f"{training_args.resume_from_checkpoint}/model_state_dict.pt"
+            )
         model = MEG.from_pretrained(
-            checkpoint_path=ckpt_filepath, 
+            checkpoint_path=ckpt_filepath,
             dtype=dtype,
             config=config,
-            data_args=data_args, 
-            model_args=model_args
+            data_args=data_args,
+            model_args=model_args,
         )
     else:
         model = MEG(config, data_args, model_args)
@@ -91,11 +94,12 @@ if __name__ == '__main__':
     Active Compound: Atorvastatin Calcium
     Inactive Compounds: Microcrystalline Cellulose, Calcium Phosphate, Croscarmellose Sodium, Magnesium Stearate, Hydroxypropyl Cellulose, Titanium Dioxide, Iron Oxide, Polyethylene Glycol (specific inactive ingredients may vary by formulation).
     """
-    tokenizer_out = tokenizer.encode("[INST] " + question + " [/INST]", return_tensors="pt")
+    tokenizer_out = tokenizer.encode(
+        "[INST] " + question + " [/INST]", return_tensors="pt"
+    )
     attention_mask = tokenizer_out.ne(tokenizer.pad_token_id).long()
 
     max_new_tokens = 500
-   
 
     ## 1) MISTRAL BASELINE
     print("MISTRAL BASELINE")
@@ -105,29 +109,26 @@ if __name__ == '__main__':
         torch_dtype=config.torch_dtype,
         temperature=data_args.temp,
         do_sample=do_sample,
-        use_cache=config.use_cache,  
-        device_map=config.device_map, 
+        use_cache=config.use_cache,
+        device_map=config.device_map,
     )
 
     mistral.eval()
     mistral.to(device)
 
     output_ids = mistral.generate(
-            input_ids=tokenizer_out.to(device), 
-            attention_mask=attention_mask.to(device),
-            max_new_tokens=max_new_tokens,
-            output_scores=True, 
-            return_dict_in_generate=False,
-        )
+        input_ids=tokenizer_out.to(device),
+        attention_mask=attention_mask.to(device),
+        max_new_tokens=max_new_tokens,
+        output_scores=True,
+        return_dict_in_generate=False,
+    )
     outputs = tokenizer.batch_decode(
-        output_ids,
-        spaces_between_special_tokens=False,
-        skip_special_tokens=True
+        output_ids, spaces_between_special_tokens=False, skip_special_tokens=True
     )
     print(outputs[0])
-    
-    mistral.to( torch.device("cpu") )
 
+    mistral.to(torch.device("cpu"))
 
     ## 2) UMLS TUNED
     print("\n\nUMLS TUNED")
@@ -139,21 +140,21 @@ if __name__ == '__main__':
 
     output_ids = model.generate(
         task=None,
-        prefix=prefix, 
-        input_ids=tokenizer_out.to(device), 
+        prefix=prefix,
+        input_ids=tokenizer_out.to(device),
         attention_mask=attention_mask.to(device),
         max_new_tokens=max_new_tokens,
-        output_scores=True, 
+        output_scores=True,
         return_dict_in_generate=False,
-        debug=False
+        debug=False,
     )
     outputs = tokenizer.batch_decode(
-        output_ids,
-        spaces_between_special_tokens=False,
-        skip_special_tokens=True
+        output_ids, spaces_between_special_tokens=False, skip_special_tokens=True
     )
     print(outputs[0])
 
     model.to(torch.device("cpu"))
 
-    import pdb; pdb.set_trace()
+    import pdb
+
+    pdb.set_trace()

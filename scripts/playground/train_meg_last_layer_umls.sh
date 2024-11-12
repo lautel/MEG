@@ -1,8 +1,6 @@
 #!/bin/bash
 # set -e
 
-export WANDB_ENTITY="lcp"
-export WANDB_PROJECT="KG-LLM_ERSA"
 export OMP_NUM_THREADS=8  # nb_cpu_threads / nproc_per_node
 export PYTHONPATH=$(builtin cd ..; pwd)
 
@@ -10,6 +8,8 @@ export DS_SKIP_CUDA_CHECK=1
 
 cd ../
 . ../main.config
+export WANDB_ENTITY=${WANDB_ENTITY}
+export WANDB_PROJECT=${WANDB_PROJECT}
 
 DATASET=umls
 SEED=0

@@ -1,4 +1,4 @@
-name: sa
+name: meg
 channels:
   - pyg
   - nvidia
@@ -378,4 +378,4 @@ dependencies:
       - xformers==0.0.27.post2
       - xxhash==3.4.1
       - yarl==1.9.2
-prefix: /home/ubuntu/miniconda3/envs/sa
+prefix: /home/ubuntu/miniconda3/envs/meg
