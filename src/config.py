@@ -10,19 +10,20 @@ class MEGConfig(MistralConfig):
                  task: str="",
                  modelname: str="",
                  padding_side: str="left",
-                 prefix_length: int=10, 
-                 mapping_type: MappingType=MappingType.Transformer, 
+                 prefix_length: int=1, 
+                 mapping_type: MappingType=MappingType.MLP, 
                  attn_implementation: str="flash_attention_2", 
                  gradient_checkpointing: bool=False,
-                 torch_dtype: torch.dtype=torch.float32, 
+                 torch_dtype: torch.dtype=torch.float16, 
                  use_cache: bool=False, 
                  device_map: bool=None, 
                  freeze: bool = False,
-                 lora_r: int = 8,
-                 lora_alpha: int = 16,
+                 compound_loss: bool = False,
+                 lora_r: int = 32,
+                 lora_alpha: int = 64,
                  lora_dropout: float = 0.05,
                  lora_bias: str = "none",
-                 lora_target_modules: List[str] = ["q_proj", "v_proj"],
+                 lora_target_modules: List[str] = ['q_proj', 'k_proj', 'v_proj', 'o_proj', 'gate_proj', 'up_proj', 'down_proj'],
                  **kwargs):
         super().__init__(**kwargs)
         self.task=task
@@ -36,6 +37,7 @@ class MEGConfig(MistralConfig):
         self.use_cache=use_cache
         self.device_map=device_map
         self.freeze = freeze
+        self.compound_loss = compound_loss
         # LORA
         self.lora_r=lora_r
         self.lora_alpha=lora_alpha

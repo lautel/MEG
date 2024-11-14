@@ -21,7 +21,7 @@ EMBEDS_FILE=word2embed_graphsage_sapbertinit.h5
 EMBED_DIM=256
 
 ## LM
-model="mistralai/Mistral-7B-Instruct-v0.1"
+model="lautel/MEG-Mistral-7B-Instruct-v0.1"
 # model="mistralai/Mistral-7B-Instruct-v0.3"
 modelname=meg-last-layer-${MODELS[$model]}
 echo ${model} ${modelname}
@@ -59,10 +59,10 @@ deepspeed --include localhost:0,1,2,3 --master_port 29503 train_meg_mistral_last
 --mapping_type ${mapping_type} \
 --model_name_or_path ${model} \
 --modelname ${modelname} \
---resume_from_checkpoint ${umls_meg_ckpt} \
---data_path ${ROOT_DATA_DIR}/${DATASET}/train_with_graph_embeds_no_marker_end.jsonl \
---test_data_path ${ROOT_DATA_DIR}/${DATASET}/test_with_graph_embeds_no_marker_end.jsonl \
---embeddings_dir ${ROOT_DATA_DIR}/${EMBEDS_ORIGIN}/embeddings/${EMBEDS_FILE} \
+--resume_from_checkpoint ${meg_model} \
+--data_path ${BASE_DATA_DIR}/${DATASET}/train_with_graph_embeds_no_marker_end.jsonl \
+--test_data_path ${BASE_DATA_DIR}/${DATASET}/test_with_graph_embeds_no_marker_end.jsonl \
+--embeddings_dir ${BASE_DATA_DIR}/${EMBEDS_ORIGIN}/embeddings/${EMBEDS_FILE} \
 --output_dir ${CKPT_DIR}/${WANDB_NAME} \
 --padding_side left \
 --bf16 True \
@@ -79,7 +79,7 @@ deepspeed --include localhost:0,1,2,3 --master_port 29503 train_meg_mistral_last
 --learning_rate ${LR} \
 --weight_decay 0.     \
 --warmup_ratio 0.03    \
---loss_temperature ${loss_temp} \
+--xent_temperature ${loss_temp} \
 --lr_scheduler_type "cosine"   \
 --model_max_length ${MODEL_MAX_LEN} \
 --max_new_tokens ${MAX_NEW_TOKENS} \
@@ -117,8 +117,8 @@ deepspeed --include localhost:0,1 --master_port 29501 eval_meg_mistral_last_laye
 --model_name_or_path ${model} \
 --modelname ${modelname} \
 --resume_from_checkpoint ${out_ckpt} \
---test_data_path ${ROOT_DATA_DIR}/${DATASET}/test_with_graph_embeds_no_marker_end.jsonl \
---embeddings_dir ${ROOT_DATA_DIR}/${EMBEDS_ORIGIN}/embeddings/${EMBEDS_FILE} \
+--test_data_path ${BASE_DATA_DIR}/${DATASET}/test_with_graph_embeds_no_marker_end.jsonl \
+--embeddings_dir ${BASE_DATA_DIR}/${EMBEDS_ORIGIN}/embeddings/${EMBEDS_FILE} \
 --output_dir ${output_file} \
 --padding_side left \
 --bf16 True \
@@ -135,7 +135,7 @@ deepspeed --include localhost:0,1 --master_port 29501 eval_meg_mistral_last_laye
 --learning_rate ${LR} \
 --weight_decay 0.     \
 --warmup_ratio 0.03    \
---loss_temperature ${loss_temp} \
+--xent_temperature ${loss_temp} \
 --lr_scheduler_type "cosine" \
 --model_max_length ${MODEL_MAX_LEN} \
 --max_new_tokens ${MAX_NEW_TOKENS} \

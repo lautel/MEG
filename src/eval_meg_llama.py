@@ -6,13 +6,10 @@ import torch.distributed as dist
 
 from argparser import DataArguments, ModelArguments, LoraArguments
 from config import parse_meg_config
-from train_meg_llama import MEG
-from train_utils import main_eval, compute_eval_metrics
+from train_meg_llama import MEGModel
+from eval_utils import main_eval, compute_eval_metrics
 from utils import set_seed
 from trl import SFTConfig
-from huggingface_hub import login
-
-login(token="your-hugginface-login-token")
 
 logger = logging.getLogger(__name__)
 logging.getLogger('transformers.generation_utils').disabled = True
@@ -37,7 +34,7 @@ if __name__ == '__main__':
         if training_args.tf32:
             dtype=torch.float32
 
-    ## Load MEG
+    ## Load MEGModel
     config = parse_meg_config(data_args, training_args, lora_args, model_args, dtype)
     if training_args.resume_from_checkpoint:
         if "global_step" in training_args.resume_from_checkpoint:
@@ -46,7 +43,7 @@ if __name__ == '__main__':
             ckpt_filepath = f"{training_args.resume_from_checkpoint}/pytorch_model.bin"
         else:
             ckpt_filepath = f"{training_args.resume_from_checkpoint}/model_state_dict.pt"
-        model = MEG.from_pretrained(
+        model =  MEGModel.from_pretrained(
             checkpoint_path=ckpt_filepath, 
             dtype=dtype,
             config=config,
@@ -54,7 +51,7 @@ if __name__ == '__main__':
             model_args=model_args
         )
     else:
-        model = MEG(config, data_args, model_args)
+        model =  MEGModel(config, data_args, model_args)
 
     ## Evaluate
     main_eval(model, dtype, data_args, training_args, model_args)

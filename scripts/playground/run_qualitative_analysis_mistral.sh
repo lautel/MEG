@@ -49,9 +49,9 @@ torchrun --nproc_per_node=1 --master_port=9779 qualitative_analysis_mistral.py  
 --mapping_type ${mapping_type} \
 --model_name_or_path ${model} \
 --modelname ${modelname} \
---resume_from_checkpoint ${umls_meg_ckpt} \
---test_data_path ${ROOT_DATA_DIR}/${DATASET}/test_with_graph_embeds_no_marker_end.jsonl \
---embeddings_dir ${ROOT_DATA_DIR}/${EMBEDS_ORIGIN}/embeddings/${EMBEDS_FILE} \
+--resume_from_checkpoint ${meg_model} \
+--test_data_path ${BASE_DATA_DIR}/${DATASET}/test_with_graph_embeds_no_marker_end.jsonl \
+--embeddings_dir ${BASE_DATA_DIR}/${EMBEDS_ORIGIN}/embeddings/${EMBEDS_FILE} \
 --output_dir "" \
 --padding_side left \
 --bf16 True \
@@ -68,7 +68,7 @@ torchrun --nproc_per_node=1 --master_port=9779 qualitative_analysis_mistral.py  
 --learning_rate ${LR} \
 --weight_decay 0.     \
 --warmup_ratio 0.03    \
---loss_temperature ${loss_temp} \
+--xent_temperature ${loss_temp} \
 --lr_scheduler_type "cosine" \
 --model_max_length ${MODEL_MAX_LEN} \
 --max_new_tokens ${MAX_NEW_TOKENS} \

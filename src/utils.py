@@ -32,6 +32,13 @@ def set_seed(seed):
     torch.backends.cudnn.deterministic = True
 
 
+def print_and_log(string, logger=None):
+    if logger is None:
+        print(string)
+    else:
+        logger.info(string)
+
+
 def summary_parameters(model, logger=None):
     """
     Summary Parameters of Model

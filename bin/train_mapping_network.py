@@ -87,7 +87,7 @@ def main():
         mapper = TransformerMappingNetwork(
             output_dim=output_dim,  # self.language_decoder.embed_dim,
             hidden_dim=hidden_dim,
-            t=data_args.loss_temperature,
+            t=data_args.xent_temperature,
             model_args=model_args,
             dtype=dtype,
         )
@@ -187,7 +187,7 @@ def main():
             #         )
 
             # SAVE MODEL
-            output_dir = f"{training_args.output_dir}-t{data_args.loss_temperature}-lr{training_args.learning_rate}-s{training_args.seed}"
+            output_dir = f"{training_args.output_dir}-t{data_args.xent_temperature}-lr{training_args.learning_rate}-s{training_args.seed}"
             save_model_ckpt(
                 mapper, training_args.local_rank, output_dir, distributed=False
             )

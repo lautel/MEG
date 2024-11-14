@@ -22,8 +22,10 @@ EMBED_DIM=256
 
 ## LM
 model="mistralai/Mistral-7B-Instruct-v0.1"
+meg_model="lautel/MEG-Mistral-7B-Instruct-v0.1"
 # model="mistralai/Mistral-7B-Instruct-v0.3"
-modelname=meg-${MODELS[$model]}
+# meg_model="lautel/MEG-Mistral-7B-Instruct-v0.3"
+modelname=${MODELS[$meg_model]}
 echo ${model} ${modelname}
 
 LR=1e-4
@@ -41,8 +43,6 @@ num_heads=1
 loss_temp=1.0
 
 ## Logs
-UMLS_WANDB_NAME=umls-meg-mistral-instruct-lr1e-5-124-mlp-256-1-1-umls-s0
-umls_meg_ckpt=${CKPT_DIR}/${UMLS_WANDB_NAME}/checkpoint-epoch-1/global_step2327
 WANDB_NAME=${DATASET}-${modelname}-lr${LR}-${MODEL_MAX_LEN}-${mapping_type}-${EMBED_DIM}-${input_prefix_length}-${output_prefix_length}-${EMBEDS_ORIGIN}-s${SEED}
 
 cd ${TRAIN_CODE_DIR}
@@ -60,10 +60,10 @@ deepspeed --include localhost:4,5,6,7 --master_port 29504 train_meg_mistral.py >
 --max_num_embeds 3 \
 --model_name_or_path ${model} \
 --modelname ${modelname} \
---resume_from_checkpoint ${umls_meg_ckpt} \
---data_path ${ROOT_DATA_DIR}/${DATASET}/train_with_graph_embeds_no_marker_end.jsonl \
---test_data_path ${ROOT_DATA_DIR}/${DATASET}/test_with_graph_embeds_no_marker_end.jsonl \
---embeddings_dir ${ROOT_DATA_DIR}/${EMBEDS_ORIGIN}/embeddings/${EMBEDS_FILE} \
+--resume_from_checkpoint ${meg_model} \
+--data_path ${BASE_DATA_DIR}/${DATASET}/train_with_graph_embeds_no_marker_end.jsonl \
+--test_data_path ${BASE_DATA_DIR}/${DATASET}/test_with_graph_embeds_no_marker_end.jsonl \
+--embeddings_dir ${BASE_DATA_DIR}/${EMBEDS_ORIGIN}/embeddings/${EMBEDS_FILE} \
 --output_dir ${CKPT_DIR}/${DATASET}/${WANDB_NAME} \
 --padding_side left \
 --bf16 True \
@@ -80,7 +80,7 @@ deepspeed --include localhost:4,5,6,7 --master_port 29504 train_meg_mistral.py >
 --learning_rate ${LR} \
 --weight_decay 0.     \
 --warmup_ratio 0.03    \
---loss_temperature ${loss_temp} \
+--xent_temperature ${loss_temp} \
 --lr_scheduler_type "cosine"   \
 --model_max_length ${MODEL_MAX_LEN} \
 --max_new_tokens ${MAX_NEW_TOKENS} \
@@ -118,8 +118,8 @@ deepspeed --include localhost:2,3 --master_port 29503 eval_meg_mistral.py > ${lo
 --model_name_or_path ${model} \
 --modelname ${modelname} \
 --resume_from_checkpoint ${out_ckpt} \
---test_data_path ${ROOT_DATA_DIR}/${DATASET}/test_with_graph_embeds_no_marker_end.jsonl \
---embeddings_dir ${ROOT_DATA_DIR}/${EMBEDS_ORIGIN}/embeddings/${EMBEDS_FILE} \
+--test_data_path ${BASE_DATA_DIR}/${DATASET}/test_with_graph_embeds_no_marker_end.jsonl \
+--embeddings_dir ${BASE_DATA_DIR}/${EMBEDS_ORIGIN}/embeddings/${EMBEDS_FILE} \
 --output_dir ${output_file} \
 --padding_side left \
 --bf16 True \
@@ -136,7 +136,7 @@ deepspeed --include localhost:2,3 --master_port 29503 eval_meg_mistral.py > ${lo
 --learning_rate ${LR} \
 --weight_decay 0.     \
 --warmup_ratio 0.03    \
---loss_temperature ${loss_temp} \
+--xent_temperature ${loss_temp} \
 --lr_scheduler_type "cosine" \
 --model_max_length ${MODEL_MAX_LEN} \
 --max_new_tokens ${MAX_NEW_TOKENS} \

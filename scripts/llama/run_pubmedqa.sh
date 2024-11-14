@@ -22,7 +22,8 @@ EMBED_DIM=256
 
 ## LM
 model="meta-llama/Llama-3.1-8B-Instruct"
-modelname=meg-${MODELS[$model]}
+meg_model="lautel/MEG-Llama-3.1-8B-Instruct"
+modelname=${MODELS[$meg_model]}
 echo ${model} ${modelname}
 
 LR=1e-4
@@ -40,8 +41,6 @@ num_heads=1
 loss_temp=1.0
 
 ## Logs
-UMLS_WANDB_NAME=umls-meg-llama3-instruct-8B-lr1e-5-124-mlp-256-1-1-umls-s0
-umls_meg_ckpt=${CKPT_DIR}/${UMLS_WANDB_NAME}/checkpoint-epoch-1
 WANDB_NAME=${DATASET}-${modelname}-lr${LR}-${MODEL_MAX_LEN}-${mapping_type}-${EMBED_DIM}-${input_prefix_length}-${output_prefix_length}-s${SEED}
 
 cd ${TRAIN_CODE_DIR}
@@ -57,10 +56,10 @@ CUDA_VISIBLE_DEVICES=4,5,6,7 torchrun --nproc_per_node=4 --master_port=9778 trai
 --mapping_type ${mapping_type} \
 --model_name_or_path ${model} \
 --modelname ${modelname} \
---resume_from_checkpoint ${umls_meg_ckpt} \
---data_path ${ROOT_DATA_DIR}/${DATASET}/train_with_graph_embeds_no_marker_end.jsonl \
---test_data_path ${ROOT_DATA_DIR}/${DATASET}/test_with_graph_embeds_no_marker_end.jsonl \
---embeddings_dir ${ROOT_DATA_DIR}/${EMBEDS_ORIGIN}/embeddings/${EMBEDS_FILE} \
+--resume_from_checkpoint ${meg_model} \
+--data_path ${BASE_DATA_DIR}/${DATASET}/train_with_graph_embeds_no_marker_end.jsonl \
+--test_data_path ${BASE_DATA_DIR}/${DATASET}/test_with_graph_embeds_no_marker_end.jsonl \
+--embeddings_dir ${BASE_DATA_DIR}/${EMBEDS_ORIGIN}/embeddings/${EMBEDS_FILE} \
 --output_dir ${CKPT_DIR}/${DATASET}/${WANDB_NAME} \
 --padding_side left \
 --bf16 True \
@@ -77,7 +76,7 @@ CUDA_VISIBLE_DEVICES=4,5,6,7 torchrun --nproc_per_node=4 --master_port=9778 trai
 --learning_rate ${LR} \
 --weight_decay 0.     \
 --warmup_ratio 0.03    \
---loss_temperature ${loss_temp} \
+--xent_temperature ${loss_temp} \
 --lr_scheduler_type "cosine"   \
 --model_max_length ${MODEL_MAX_LEN} \
 --max_new_tokens ${MAX_NEW_TOKENS} \
@@ -114,8 +113,8 @@ CUDA_VISIBLE_DEVICES=0,1 torchrun --nproc_per_node=2 --master_port=9778 eval_meg
 --model_name_or_path ${model} \
 --modelname ${modelname} \
 --resume_from_checkpoint ${out_ckpt} \
---test_data_path ${ROOT_DATA_DIR}/${DATASET}/test_with_graph_embeds_no_marker_end.jsonl \
---embeddings_dir ${ROOT_DATA_DIR}/${EMBEDS_ORIGIN}/embeddings/${EMBEDS_FILE} \
+--test_data_path ${BASE_DATA_DIR}/${DATASET}/test_with_graph_embeds_no_marker_end.jsonl \
+--embeddings_dir ${BASE_DATA_DIR}/${EMBEDS_ORIGIN}/embeddings/${EMBEDS_FILE} \
 --output_dir ${output_file} \
 --padding_side left \
 --bf16 False \
@@ -132,7 +131,7 @@ CUDA_VISIBLE_DEVICES=0,1 torchrun --nproc_per_node=2 --master_port=9778 eval_meg
 --learning_rate ${LR} \
 --weight_decay 0.     \
 --warmup_ratio 0.03    \
---loss_temperature ${loss_temp} \
+--xent_temperature ${loss_temp} \
 --lr_scheduler_type "cosine" \
 --model_max_length ${MODEL_MAX_LEN} \
 --max_new_tokens ${MAX_NEW_TOKENS} \

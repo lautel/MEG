@@ -882,7 +882,7 @@ if __name__ == "__main__":
     data_args = DataArguments()
     data_args.task = "umls"
     data_args.model_name_or_path = "mistralai/Mistral-7B-Instruct-v0.1"
-    data_args.modelname = "mistral-instruct"
+    data_args.modelname = "mistral-instruct-v0.1"
     ## umls
     data_args.data_path=f"{ROOT}/umls/embeddings/debug-vocab_training_meg.jsonl"
     data_args.embeddings_dir=f"{ROOT}/umls/embeddings/debug-word2embed_graphsage_sapbertinit.h5"

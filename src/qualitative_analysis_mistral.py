@@ -3,7 +3,7 @@ import logging
 import torch
 import transformers
 from transformers import MistralForCausalLM
-from train_meg_mistral import MEG
+from train_meg_mistral import MEGMistralModel
 from config import parse_meg_config
 from trl import SFTConfig
 from argparser import DataArguments, ModelArguments, LoraArguments
@@ -38,26 +38,18 @@ if __name__ == "__main__":
     else:
         do_sample = True
 
-    ## Load MEG
+    ## Load MEGMistralModel
     config = parse_meg_config(data_args, training_args, lora_args, model_args, dtype)
     if training_args.resume_from_checkpoint:
-        if "global_step" in training_args.resume_from_checkpoint:
-            ckpt_filepath = (
-                f"{training_args.resume_from_checkpoint}/mp_rank_00_model_states.pt"
-            )
-        else:
-            ckpt_filepath = (
-                f"{training_args.resume_from_checkpoint}/model_state_dict.pt"
-            )
-        model = MEG.from_pretrained(
-            checkpoint_path=ckpt_filepath,
+        model =  MEGMistralModel.from_pretrained(
+            checkpoint_path=training_args.resume_from_checkpoint,
             dtype=dtype,
             config=config,
             data_args=data_args,
             model_args=model_args,
         )
     else:
-        model = MEG(config, data_args, model_args)
+        model =  MEGMistralModel(config, data_args, model_args)
 
     tokenizer = model.get_tokenizer()
     device = torch.device("cuda") if torch.cuda.is_available() else torch.device("cpu")
@@ -104,7 +96,7 @@ if __name__ == "__main__":
     ## 1) MISTRAL BASELINE
     print("MISTRAL BASELINE")
     mistral = MistralForCausalLM.from_pretrained(
-        data_args.model_name_or_path,
+        "mistralai/Mistral-7B-Instruct-v0.1",
         attn_implementation=config.attn_implementation,
         torch_dtype=config.torch_dtype,
         temperature=data_args.temp,

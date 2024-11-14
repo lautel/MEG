@@ -18,7 +18,7 @@ SEED=0
 EMBEDS_ORIGIN=umls
 
 ## LM
-model="mistralai/Mistral-7B-Instruct-v0.1"
+model="lautel/MEG-Mistral-7B-Instruct-v0.1"
 modelname=meg-${MODELS[$model]}
 echo ${model} ${modelname}
 
@@ -44,9 +44,9 @@ deepspeed --include localhost:0,1,2,3 --master_port 29502 train_meg_mistral.py >
 --task ${DATASET} \
 --model_name_or_path ${model} \
 --modelname ${modelname} \
---data_path ${ROOT_DATA_DIR}/${DATASET}/train_with_graph_embeds_no_marker_end.jsonl \
---test_data_path ${ROOT_DATA_DIR}/${DATASET}/test_with_graph_embeds_no_marker_end.jsonl \
---graph_in_prompt ${ROOT_DATA_DIR}/${EMBEDS_ORIGIN}/neighbors_data_n25.jsonl \
+--data_path ${BASE_DATA_DIR}/${DATASET}/train_with_graph_embeds_no_marker_end.jsonl \
+--test_data_path ${BASE_DATA_DIR}/${DATASET}/test_with_graph_embeds_no_marker_end.jsonl \
+--graph_in_prompt ${BASE_DATA_DIR}/${EMBEDS_ORIGIN}/neighbors_data_n25.jsonl \
 --output_dir ${CKPT_DIR}/${WANDB_NAME} \
 --padding_side left \
 --bf16 True \
@@ -63,7 +63,7 @@ deepspeed --include localhost:0,1,2,3 --master_port 29502 train_meg_mistral.py >
 --learning_rate ${LR} \
 --weight_decay 0.     \
 --warmup_ratio 0.03    \
---loss_temperature ${loss_temp} \
+--xent_temperature ${loss_temp} \
 --lr_scheduler_type "cosine"   \
 --model_max_length ${MODEL_MAX_LEN} \
 --max_new_tokens ${MAX_NEW_TOKENS} \
@@ -96,8 +96,8 @@ deepspeed --include localhost:0,1 --master_port 29501 eval_meg_mistral.py > ${lo
 --model_name_or_path ${model} \
 --modelname ${modelname} \
 --resume_from_checkpoint ${out_ckpt} \
---test_data_path ${ROOT_DATA_DIR}/${DATASET}/test_with_graph_embeds_no_marker_end.jsonl \
---graph_in_prompt ${ROOT_DATA_DIR}/${EMBEDS_ORIGIN}/neighbors_data_n25.jsonl \
+--test_data_path ${BASE_DATA_DIR}/${DATASET}/test_with_graph_embeds_no_marker_end.jsonl \
+--graph_in_prompt ${BASE_DATA_DIR}/${EMBEDS_ORIGIN}/neighbors_data_n25.jsonl \
 --output_dir ${output_file} \
 --padding_side left \
 --bf16 True \
@@ -114,7 +114,7 @@ deepspeed --include localhost:0,1 --master_port 29501 eval_meg_mistral.py > ${lo
 --learning_rate ${LR} \
 --weight_decay 0.     \
 --warmup_ratio 0.03    \
---loss_temperature ${loss_temp} \
+--xent_temperature ${loss_temp} \
 --lr_scheduler_type "cosine" \
 --model_max_length ${MODEL_MAX_LEN} \
 --max_new_tokens ${MAX_NEW_TOKENS} \

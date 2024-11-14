@@ -11,7 +11,7 @@ cd ../
 export WANDB_ENTITY=${WANDB_ENTITY}
 export WANDB_PROJECT=${WANDB_PROJECT}
 
-model="mistralai/Mistral-7B-Instruct-v0.1"
+model="lautel/MEG-Mistral-7B-Instruct-v0.1"
 modelname=${MODELS[$model]}
 echo ${model} ${modelname}
 
@@ -44,8 +44,8 @@ CUDA_VISIBLE_DEVICE=4,5 torchrun --master_port 29502 train_mapping_network.py \
 --mapping_type ${mapping_type} \
 --model_name_or_path ${model} \
 --modelname ${modelname} \
---data_path ${ROOT_DATA_DIR}/${EMBEDS_ORIGIN}/embeddings/contextualized_embeddings.h5 \
---embeddings_dir ${ROOT_DATA_DIR}/${EMBEDS_ORIGIN}/embeddings/${EMBEDS_FILE} \
+--data_path ${BASE_DATA_DIR}/${EMBEDS_ORIGIN}/embeddings/contextualized_embeddings.h5 \
+--embeddings_dir ${BASE_DATA_DIR}/${EMBEDS_ORIGIN}/embeddings/${EMBEDS_FILE} \
 --output_dir ${CKPT_DIR}/${WANDB_NAME} \
 --padding_side left \
 --bf16 True \
@@ -60,7 +60,7 @@ CUDA_VISIBLE_DEVICE=4,5 torchrun --master_port 29502 train_mapping_network.py \
 --learning_rate ${LR} \
 --weight_decay 0.001     \
 --warmup_ratio 0    \
---loss_temperature 0.5 \
+--xent_temperature 0.5 \
 --lr_scheduler_type "cosine"   \
 --model_max_length ${MODEL_MAX_LEN} \
 --max_new_tokens ${MAX_NEW_TOKENS} \

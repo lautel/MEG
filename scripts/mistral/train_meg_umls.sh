@@ -28,7 +28,6 @@ EMBED_DIM=256
 ## LM
 model="mistralai/Mistral-7B-Instruct-v0.1"
 # model="mistralai/Mistral-7B-Instruct-v0.3"
-# model="mistralai/Mixtral-8x7B-Instruct-v0.1"
 modelname=meg-${MODELS[$model]}
 echo ${model} ${modelname}
 
@@ -61,8 +60,8 @@ deepspeed --include localhost:4,5,6,7 --master_port 29505 train_meg_mistral.py >
 --mapping_type ${mapping_type} \
 --model_name_or_path ${model} \
 --modelname ${modelname} \
---data_path ${ROOT_DATA_DIR}/${EMBEDS_ORIGIN}/vocab_training_meg.jsonl \
---embeddings_dir ${ROOT_DATA_DIR}/${EMBEDS_ORIGIN}/embeddings/${EMBEDS_FILE} \
+--data_path ${BASE_DATA_DIR}/${EMBEDS_ORIGIN}/vocab_training_meg.jsonl \
+--embeddings_dir ${BASE_DATA_DIR}/${EMBEDS_ORIGIN}/embeddings/${EMBEDS_FILE} \
 --output_dir ${CKPT_DIR}/${WANDB_NAME} \
 --padding_side left \
 --bf16 True \
@@ -79,7 +78,7 @@ deepspeed --include localhost:4,5,6,7 --master_port 29505 train_meg_mistral.py >
 --learning_rate ${LR} \
 --weight_decay 0.     \
 --warmup_ratio 0.03    \
---loss_temperature ${loss_temp} \
+--xent_temperature ${loss_temp} \
 --lr_scheduler_type "cosine"   \
 --model_max_length ${MODEL_MAX_LEN} \
 --max_new_tokens ${MAX_NEW_TOKENS} \

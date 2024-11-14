@@ -41,8 +41,8 @@ deepspeed --include localhost:4,5,6,7 --master_port 29504 train_meg_mistral.py >
 --task ${DATASET} \
 --model_name_or_path ${model} \
 --modelname ${modelname} \
---data_path ${ROOT_DATA_DIR}/${DATASET}/train_with_graph_embeds_no_marker_end.jsonl \
---test_data_path ${ROOT_DATA_DIR}/${DATASET}/test_with_graph_embeds_no_marker_end.jsonl \
+--data_path ${BASE_DATA_DIR}/${DATASET}/train_with_graph_embeds_no_marker_end.jsonl \
+--test_data_path ${BASE_DATA_DIR}/${DATASET}/test_with_graph_embeds_no_marker_end.jsonl \
 --output_dir ${CKPT_DIR}/${DATASET}/${WANDB_NAME} \
 --padding_side left \
 --bf16 True \
@@ -90,7 +90,7 @@ deepspeed --include localhost:4,5 --master_port 29505 eval_meg_mistral.py > ${lo
 --model_name_or_path ${model} \
 --modelname ${modelname} \
 --resume_from_checkpoint ${out_ckpt} \
---test_data_path ${ROOT_DATA_DIR}/${DATASET}/test_with_graph_embeds_no_marker_end.jsonl \
+--test_data_path ${BASE_DATA_DIR}/${DATASET}/test_with_graph_embeds_no_marker_end.jsonl \
 --output_dir ${output_file} \
 --padding_side left \
 --bf16 True \

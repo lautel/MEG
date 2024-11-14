@@ -8,7 +8,6 @@ from typing import Dict, List, Optional, Any
 class TrainingArguments(transformers.TrainingArguments):
     cache_dir: Optional[str] = field(default=None)
     optim: str = field(default="adamw_torch")
-    
     flash_attn: bool = False
     seed: int = 231106
 
@@ -28,17 +27,18 @@ class TrainingArguments(transformers.TrainingArguments):
 
 @dataclass
 class DataArguments:
-    task: str = field(default="ersa", metadata={"help": "task or dataset name"})
-    model_name_or_path: Optional[str] = field(default="google/flan-t5-small")
-    modelname: Optional[str] = field(default="flan-t5-small")
-    graph_in_prompt: str = None
+    task: str = field(
+        default=None, metadata={"help": "Task or dataset name."})
+    model_name_or_path: str = field(
+        default=None, metadata={"help": "The model checkpoint for weights initialization."}) 
+    modelname: str = field(
+        default=None, metadata={"help": "The custom model name you want for your model."}) 
+    graph_in_prompt: Optional[str] = field(
+        default=None, metadata={"help": "If you want to include the graph triplets in the input prompt, provide here the path to neighbors_data_n25.jsonl. See scripts/playground/run_medqa_usmle_triplets_in_prompt.sh"})
     max_num_embeds: int = 20
     freeze: bool = False
     model_max_length: int = field(
-        default=2560,
-        metadata={
-            "help": "Maximum sequence length. Sequences will be right padded (and possibly truncated)."
-        },
+        default=2560, metadata={"help": "Maximum sequence length. Sequences will be right padded (and possibly truncated)."},
     )
     data_path: str = field(
         default=None, metadata={"help": "Path to the training data in conversation format."}
@@ -63,10 +63,10 @@ class DataArguments:
     )
     padding_side: str = "left"
     temp: float = field(
-        default=0.2, metadata={"help": "Temperature to control model's output"}
+        default=0.2, metadata={"help": "Temperature to control model's output at generation"}
     )
-    loss_temperature: float = field(
-        default=0.5, metadata={"help": "Temperature to control model's output"}
+    xent_temperature: float = field(
+        default=1.0, metadata={"help": "XentLoss Temperature"}
     )
     # inference params
     max_new_tokens: int = 20
@@ -77,8 +77,8 @@ class DataArguments:
 @dataclass
 class LoraArguments:
     quantization_config: str = "none"
-    lora_r: int = 8
-    lora_alpha: int = 16
+    lora_r: int = 32
+    lora_alpha: int = 64
     lora_dropout: float = 0.05
     lora_target_modules: List[str] = field(default_factory=lambda: ["q_proj", "v_proj"])
     lora_weight_path: str = ""

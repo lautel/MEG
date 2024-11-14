@@ -39,8 +39,8 @@ torchrun --nproc_per_node=4 --master_port=9779 train_meg_llama.py > ${logging_fi
 --task ${DATASET} \
 --model_name_or_path ${model} \
 --modelname ${modelname} \
---data_path ${ROOT_DATA_DIR}/${DATASET}/train_with_graph_embeds_no_marker_end.jsonl \
---test_data_path ${ROOT_DATA_DIR}/${DATASET}/test_with_graph_embeds_no_marker_end.jsonl \
+--data_path ${BASE_DATA_DIR}/${DATASET}/train_with_graph_embeds_no_marker_end.jsonl \
+--test_data_path ${BASE_DATA_DIR}/${DATASET}/test_with_graph_embeds_no_marker_end.jsonl \
 --output_dir ${CKPT_DIR}/${DATASET}/${WANDB_NAME} \
 --padding_side left \
 --bf16 True \
@@ -86,7 +86,7 @@ torchrun --nproc_per_node=1 --master_port=9779 eval_meg_llama.py > ${logging_fil
 --task ${DATASET} \
 --model_name_or_path ${model} \
 --modelname ${modelname} \
---test_data_path ${ROOT_DATA_DIR}/${DATASET}/test_with_graph_embeds_no_marker_end.jsonl \
+--test_data_path ${BASE_DATA_DIR}/${DATASET}/test_with_graph_embeds_no_marker_end.jsonl \
 --resume_from_checkpoint ${CKPT_DIR}/${DATASET}/${WANDB_NAME}/checkpoint_last \
 --output_dir ${CKPT_DIR}/${DATASET}/${WANDB_NAME} \
 --padding_side right \

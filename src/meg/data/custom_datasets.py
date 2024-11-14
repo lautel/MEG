@@ -37,11 +37,10 @@ class MedQADataset(Dataset):
         
         # FOR MISTRAL-INSTRUCT MODELS
         self.instruction_template = {
-            "meg-mistral-instruct": [733, 16289, 28793],
-            "meg-miXtral-instruct": [733, 16289, 28793],
-            "meg-mistral-instruct3": [3],
-            "mistral-instruct": [733, 16289, 28793],
-            "mistral-instruct3": [3]
+            "meg-mistral-instruct-v0.1": [733, 16289, 28793],
+            "meg-mistral-instruct-v0.3": [3],
+            "mistral-instruct-v0.1": [733, 16289, 28793],
+            "mistral-instruct-v0.3": [3]
         }
     
         self.label2id = {"A)": 0, "B)": 1, "C)": 2,  "D)": 3}
@@ -322,11 +321,10 @@ class PubMedQADataset(Dataset):
 
         # FOR MISTRAL-INSTRUCT MODELS
         self.instruction_template = {
-            "meg-mistral-instruct": [733, 16289, 28793],
-            "meg-miXtral-instruct": [733, 16289, 28793],
-            "meg-mistral-instruct3": [3],
-            "mistral-instruct": [733, 16289, 28793],
-            "mistral-instruct3": [3]
+            "meg-mistral-instruct-v0.1": [733, 16289, 28793],
+            "meg-mistral-instruct-v0.3": [3],
+            "mistral-instruct-v0.1": [733, 16289, 28793],
+            "mistral-instruct-v0.3": [3]
         }
     
         self.label2id = {"A)": 0, "B)": 1, "C)": 2}
@@ -533,11 +531,10 @@ class MedMCQADataset(Dataset):
         
         # FOR MISTRAL-INSTRUCT MODELS
         self.instruction_template = {
-            "meg-mistral-instruct": [733, 16289, 28793],
-            "meg-miXtral-instruct": [733, 16289, 28793],
-            "meg-mistral-instruct3": [3],
-            "mistral-instruct": [733, 16289, 28793],
-            "mistral-instruct3": [3]
+            "meg-mistral-instruct-v0.1": [733, 16289, 28793],
+            "meg-mistral-instruct-v0.3": [3],
+            "mistral-instruct-v0.1": [733, 16289, 28793],
+            "mistral-instruct-v0.3": [3]
         }
     
         self.label2id = {"A)": 0, "B)": 1, "C)": 2,  "D)": 3}
@@ -820,9 +817,8 @@ class UMLSMappingDataset(Dataset):
 
         # FOR MISTRAL-INSTRUCT MODELS
         self.instruction_template = {
-            "meg-mistral-instruct": [733, 16289, 28793],
-            "meg-miXtral-instruct": [733, 16289, 28793],
-            "meg-mistral-instruct3": [3]
+            "meg-mistral-instruct-v0.1": [733, 16289, 28793],
+            "meg-mistral-instruct-v0.3": [3]
         }
 
         if is_training:
@@ -968,9 +964,8 @@ class UMLSMappingDatasetExtended(Dataset):
 
         # FOR MISTRAL-INSTRUCT MODELS
         self.instruction_template = {
-            "meg-mistral-instruct": [733, 16289, 28793],
-            "meg-miXtral-instruct": [733, 16289, 28793],
-            "meg-mistral-instruct3": [3]
+            "meg-mistral-instruct-v0.1": [733, 16289, 28793],
+            "meg-mistral-instruct-v0.3": [3]
         }
 
         if is_training:
@@ -1017,7 +1012,7 @@ class UMLSMappingDatasetExtended(Dataset):
               {'role': 'assistant',
                'content': "A) Negative for the patient's health"}]
         """
-        if "mistral-instruct" in self.modelname:
+        if "mistral-instruct-v0.1" in self.modelname:
             if not self.is_inference:
                 _user_prompt = conv[0]["content"]
                 tokenizer_out = self.tokenizer.apply_chat_template(
@@ -1153,7 +1148,7 @@ if __name__ == "__main__":
     data_args = DataArguments()
     data_args.task = "medqa_usmle"
     data_args.model_name_or_path = "mistralai/Mistral-7B-Instruct-v0.1"
-    data_args.modelname = "mistral-instruct"
+    data_args.modelname = "mistral-instruct-v0.1"
     ## medqa
     data_args.data_path=f"{ROOT}/medqa_usmle/train.jsonl"
     data_args.test_data_path=f"{ROOT}/medqa_usmle/test.jsonl"

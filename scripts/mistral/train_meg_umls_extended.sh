@@ -53,8 +53,8 @@ deepspeed --include localhost:0,1,2,3 --master_port 29502 train_meg_mistral.py >
 --mapping_type ${mapping_type} \
 --model_name_or_path ${model} \
 --modelname ${modelname} \
---data_path ${ROOT_DATA_DIR}/${EMBEDS_ORIGIN}/embeddings/vocab_training_meg_extended.jsonl \
---embeddings_dir ${ROOT_DATA_DIR}/${EMBEDS_ORIGIN}/embeddings/${EMBEDS_FILE} \
+--data_path ${BASE_DATA_DIR}/${EMBEDS_ORIGIN}/embeddings/vocab_training_meg_extended.jsonl \
+--embeddings_dir ${BASE_DATA_DIR}/${EMBEDS_ORIGIN}/embeddings/${EMBEDS_FILE} \
 --output_dir ${CKPT_DIR}/${WANDB_NAME} \
 --padding_side left \
 --bf16 True \
@@ -71,7 +71,7 @@ deepspeed --include localhost:0,1,2,3 --master_port 29502 train_meg_mistral.py >
 --learning_rate ${LR} \
 --weight_decay 0.     \
 --warmup_ratio 0.03    \
---loss_temperature ${loss_temp} \
+--xent_temperature ${loss_temp} \
 --lr_scheduler_type "cosine"   \
 --model_max_length ${MODEL_MAX_LEN} \
 --max_new_tokens ${MAX_NEW_TOKENS} \

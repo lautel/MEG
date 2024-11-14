@@ -22,7 +22,8 @@ EMBED_DIM=256
 
 ## LM
 model="meta-llama/Llama-3.1-8B-Instruct"
-modelname=meg-${MODELS[$model]}
+meg_model="lautel/MEG-Llama-3.1-8B-Instruct"
+modelname=${MODELS[$meg_model]}
 echo ${model} ${modelname}
 
 LR=1e-4
@@ -79,8 +80,8 @@ for subset_name in "professional_medicine" "clinical_knowledge" "medical_genetic
     --model_name_or_path ${model} \
     --modelname ${modelname} \
     --resume_from_checkpoint ${medqa_ckpt} \
-    --test_data_path ${ROOT_DATA_DIR}/${DATASET}/test_${subset_name}_with_graph_embeds_no_marker_end.jsonl \
-    --embeddings_dir ${ROOT_DATA_DIR}/${EMBEDS_ORIGIN}/embeddings/${EMBEDS_FILE} \
+    --test_data_path ${BASE_DATA_DIR}/${DATASET}/test_${subset_name}_with_graph_embeds_no_marker_end.jsonl \
+    --embeddings_dir ${BASE_DATA_DIR}/${EMBEDS_ORIGIN}/embeddings/${EMBEDS_FILE} \
     --output_dir ${output_file} \
     --padding_side left \
     --bf16 True \
@@ -97,7 +98,7 @@ for subset_name in "professional_medicine" "clinical_knowledge" "medical_genetic
     --learning_rate ${LR} \
     --weight_decay 0.     \
     --warmup_ratio 0.03    \
-    --loss_temperature ${loss_temp} \
+    --xent_temperature ${loss_temp} \
     --lr_scheduler_type "cosine" \
     --model_max_length ${MODEL_MAX_LEN} \
     --max_new_tokens ${MAX_NEW_TOKENS} \
