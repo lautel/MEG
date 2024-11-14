@@ -73,8 +73,7 @@ You can find our trained MEG models at [Hugging Face](https://huggingface.co/col
 
 ### Usage Example
 
-cd src/
-
+From the src/ folder:
 ```python
 import torch
 from collections import namedtuple
