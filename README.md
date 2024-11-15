@@ -71,6 +71,8 @@ We downloaded question-answering datasets from the following sources:
 ### 3.1\. Phase I training (UMLS)
 You can find our trained MEG models at [Hugging Face](https://huggingface.co/collections/lautel/meg-67337ad69051eb36b6afd169). These checkpoints include MEG-Mistral and MEG-LLama trained on UMLS data.
 
+We provide a usage example below for an open-ended question. However, note that this use-case has not been exhaustively tested. Instead, main results on the paper are after further fine-tuning on a downstream task.
+
 ### Usage Example
 
 From the src/ folder:
@@ -137,7 +139,7 @@ outputs = tokenizer.batch_decode(
 print(outputs[0])
 ```
 
-> For a complete example on how to use the model on a downstream task, see, for instance, scripts/mistral/run_medqa_usmle.sh 
+> MEG performs best when grounding the input's entities on UMLS. To do so, you can provide the trained UMLS embedding(s) in 'prefix'. You can download these embeddings from [here](https://drive.google.com/file/d/14Rx7bEpJW0_AOOIhsSkkrypNuUxvXRAX/view?usp=sharing) as detailed in Section 2.1 above.  
 
 Otherwise, if you would like to train MEG on UMLS, download the data as detailed above, set the paths and environment variables as needed, and run
 ```
